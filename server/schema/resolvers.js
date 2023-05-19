@@ -6,7 +6,7 @@ const resolvers = {
     Query: {
         getMe: async (parent, args, context) => {
             if (context.user) {
-                const userData = User.findOne({ _id: context.user._id }).select('-__v -password');
+                const userData = User.findOne({ _id: context.user._id }).select('-__v -password').populate('books');
                 return userData;
             }
             throw new AuthenticationError("Must be logged in.");
@@ -35,8 +35,8 @@ const resolvers = {
                 const updatedUser = await User.findOneAndUpdate(
                     { _id: context.user._id },
                     { $addToSet: { savedBooks: book }},
-                    { new: true }
-                );
+                    { new: true },
+                ).populate('books');
                 return updatedUser;
             }
             throw new AuthenticationError("Must be logged in.");
